@@ -69,7 +69,7 @@ public class DEMS_LVB extends AbstractClassifier implements MultiClassClassifier
     public IntOption ensembleSizeOption = new IntOption("ensembleSize", 's',
             "The number of models in the bag.", 100, 1, Integer.MAX_VALUE);
 
-    public FlagOption selfOptimisingOption = new FlagOption("selfOptimising",'f',"Trigger self optimising");
+    public FlagOption SO = new FlagOption("selfOptimising",'f',"Trigger self optimising");
 
     public IntOption kValueOption = new IntOption("k",'k',"k values",5,1,Integer.MAX_VALUE);
     public FloatOption weightShrinkOption = new FloatOption("weightShrink", 'w',
@@ -137,10 +137,10 @@ public class DEMS_LVB extends AbstractClassifier implements MultiClassClassifier
     public void trainOnInstanceImpl(Instance inst) {
         int numClasses = inst.numClasses();
         //Output Codes
-        if (this.selfOptimisingOption.isSet() && this.performances == null) this.performances = new int[this.ensemble.length];
+        if (this.SO.isSet() && this.performances == null) this.performances = new int[this.ensemble.length];
 
 
-        if(this.selfOptimisingOption.isSet()) {
+        if(this.SO.isSet()) {
             DoubleVector combinedVotes = new DoubleVector();
             for (int i = this.infos.size() - 1; i >= 0; i--) {
 //                DoubleVector vote = new DoubleVector(this.infos.get(i).getVotes());
@@ -275,7 +275,7 @@ public class DEMS_LVB extends AbstractClassifier implements MultiClassClassifier
         this.infos = this.infos.stream().sorted(Comparator.comparing(SortingInformation::getMargin_TreeAcc)).collect(Collectors.toList());
 
 
-        if (this.selfOptimisingOption.isSet()) System.out.println(this.bestK);
+        if (this.SO.isSet()) System.out.println(this.bestK);
         else this.bestK = this.kValueOption.getValue();
 
         for (int i = 0; i <  this.bestK; i++) {
